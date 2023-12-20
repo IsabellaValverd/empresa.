@@ -22,15 +22,51 @@
 <body>
     <img src="https://i.imgur.com/dYIyYjK.png" alt="Sua Imagem">
 
-    <script>
-    // Substitua as informações entre {{}} pelos valores desejados
-    document.getElementById('grupo_selecionado').innerText = 'Novo Grupo';
-    document.getElementById('nome').innerText = 'Novo Nome';
-    document.getElementById('sap').innerText = 'Novo SAP';
-    document.getElementById('gestor').innerText = 'Novo Gestor';
-    document.getElementById('nome_novo').innerText = 'Novo Responsável';
-    document.getElementById('email_selecionado').innerText = 'Novo Email';
-    </script>
-    
+   <script>
+    function adicionarItemLista() {
+        var siteUrl = "https://suzano.sharepoint.com/sites/CoordenaoCTMRO";
+        var listaNome = "Retorno_Autorizacao";
+
+        // Obtém o token de solicitação
+        var requestDigest = document.getElementById("__REQUESTDIGEST").value;
+
+        // Monta a URL do endpoint para adicionar um item à lista
+        var endpointUrl = siteUrl + "/_api/web/lists/getbytitle('" + listaNome + "')/items";
+
+        // Dados do item a serem adicionados
+        var item = {
+            "__metadata": { "type": "SP.Data.Retorno_AutorizacaoListItem" },
+            "grupo_selecionado": "Grupo_De_Compras",
+            "gestor": "Gestor",
+            "nome": "Antigo_Responsavel",
+            "sap": "Sap_Antigo",
+            "nome_novo": "Novo_Responsavel",
+            "email_selecionado": "Sap_Novo"
+        };
+
+        // Faz uma chamada FETCH para adicionar o item à lista
+        fetch(endpointUrl, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json;odata=verbose',
+                'Content-Type': 'application/json;odata=verbose',
+                'X-RequestDigest': requestDigest
+            },
+            body: JSON.stringify(item)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Item adicionado com sucesso!");
+            console.log(data);
+        })
+        .catch(error => {
+            console.error("Erro ao adicionar item à lista: " + error);
+        });
+    }
+
+    // Execute a função para adicionar o item à lista quando a página carregar
+    adicionarItemLista();
+</script>
+
 </body>
 </html>
