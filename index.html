@@ -27,16 +27,30 @@
             adicionarItemLista();
         });
 
-        function adicionarItemLista() {
+        function obterTokenSolicitacao() {
+            return fetch("https://suzano.sharepoint.com/sites/CoordenaoCTMRO/_api/contextinfo", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json;odata=verbose',
+                    'Content-Type': 'application/json;odata=verbose'
+                }
+            })
+            .then(response => response.json())
+            .then(data => data.d.GetContextWebInformation.FormDigestValue)
+            .catch(error => {
+                console.error("Erro ao obter o token de solicitação: " + error);
+                return null;
+            });
+        }
+
+        async function adicionarItemLista() {
             var siteUrl = "https://suzano.sharepoint.com/sites/CoordenaoCTMRO";
             var listaNome = "Retorno_Autorizacao";
 
             // Obtém o token de solicitação
-            var requestDigest = document.getElementById("__REQUESTDIGEST");
+            var requestDigest = await obterTokenSolicitacao();
 
             if (requestDigest) {
-                var requestDigestValue = requestDigest.value;
-
                 // Monta a URL do endpoint para adicionar um item à lista
                 var endpointUrl = siteUrl + "/_api/web/lists/getbytitle('" + listaNome + "')/items";
 
@@ -57,7 +71,7 @@
                     headers: {
                         'Accept': 'application/json;odata=verbose',
                         'Content-Type': 'application/json;odata=verbose',
-                        'X-RequestDigest': requestDigestValue
+                        'X-RequestDigest': requestDigest
                     },
                     body: JSON.stringify(item)
                 })
@@ -70,7 +84,7 @@
                     console.error("Erro ao adicionar item à lista: " + error);
                 });
             } else {
-                console.error("Elemento com ID '__REQUESTDIGEST' não encontrado.");
+                console.error("Token de solicitação não obtido.");
             }
         }
     </script>
