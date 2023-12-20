@@ -22,51 +22,58 @@
 <body>
     <img src="https://i.imgur.com/dYIyYjK.png" alt="Sua Imagem">
 
-   <script>
-    function adicionarItemLista() {
-        var siteUrl = "https://suzano.sharepoint.com/sites/CoordenaoCTMRO";
-        var listaNome = "Retorno_Autorizacao";
-
-        // Obtém o token de solicitação
-        var requestDigest = document.getElementById("__REQUESTDIGEST").value;
-
-        // Monta a URL do endpoint para adicionar um item à lista
-        var endpointUrl = siteUrl + "/_api/web/lists/getbytitle('" + listaNome + "')/items";
-
-        // Dados do item a serem adicionados
-        var item = {
-            "__metadata": { "type": "SP.Data.Retorno_AutorizacaoListItem" },
-            "grupo_selecionado": "Grupo_De_Compras",
-            "gestor": "Gestor",
-            "nome": "Antigo_Responsavel",
-            "sap": "Sap_Antigo",
-            "nome_novo": "Novo_Responsavel",
-            "email_selecionado": "Sap_Novo"
-        };
-
-        // Faz uma chamada FETCH para adicionar o item à lista
-        fetch(endpointUrl, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json;odata=verbose',
-                'Content-Type': 'application/json;odata=verbose',
-                'X-RequestDigest': requestDigest
-            },
-            body: JSON.stringify(item)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Item adicionado com sucesso!");
-            console.log(data);
-        })
-        .catch(error => {
-            console.error("Erro ao adicionar item à lista: " + error);
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            adicionarItemLista();
         });
-    }
 
-    // Execute a função para adicionar o item à lista quando a página carregar
-    adicionarItemLista();
-</script>
+        function adicionarItemLista() {
+            var siteUrl = "https://suzano.sharepoint.com/sites/CoordenaoCTMRO";
+            var listaNome = "Retorno_Autorizacao";
+
+            // Obtém o token de solicitação
+            var requestDigest = document.getElementById("__REQUESTDIGEST");
+
+            if (requestDigest) {
+                var requestDigestValue = requestDigest.value;
+
+                // Monta a URL do endpoint para adicionar um item à lista
+                var endpointUrl = siteUrl + "/_api/web/lists/getbytitle('" + listaNome + "')/items";
+
+                // Dados do item a serem adicionados
+                var item = {
+                    "__metadata": { "type": "SP.Data.Retorno_AutorizacaoListItem" },
+                    "grupo_selecionado": "Grupo_De_Compras",
+                    "gestor": "Gestor",
+                    "nome": "Antigo_Responsavel",
+                    "sap": "Sap_Antigo",
+                    "nome_novo": "Novo_Responsavel",
+                    "email_selecionado": "Sap_Novo"
+                };
+
+                // Faz uma chamada FETCH para adicionar o item à lista
+                fetch(endpointUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json;odata=verbose',
+                        'Content-Type': 'application/json;odata=verbose',
+                        'X-RequestDigest': requestDigestValue
+                    },
+                    body: JSON.stringify(item)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Item adicionado com sucesso!");
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error("Erro ao adicionar item à lista: " + error);
+                });
+            } else {
+                console.error("Elemento com ID '__REQUESTDIGEST' não encontrado.");
+            }
+        }
+    </script>
 
 </body>
 </html>
